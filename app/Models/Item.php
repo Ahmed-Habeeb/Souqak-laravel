@@ -16,8 +16,6 @@ class Item extends Model
         'subcategory',
         'image',
         'price',
-        'phone'
-
     ];
 
 

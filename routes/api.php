@@ -30,7 +30,7 @@ Route::group([
     Route::post('logout', [AuthController::class,'logout']);
     Route::post('refresh', 'AuthController@refresh');
     Route::get('me', [AuthController::class,'me']);
-    Route::get('fetch', [ItemController::class,'fetch']);
+    Route::get('fetchlatest', [ItemController::class,'fetchLatest']);
 
     Route::group(['prefix'=>'doctor'],function ($router){
         Route::post('add', [DoctorController::class,'addDoctor']);

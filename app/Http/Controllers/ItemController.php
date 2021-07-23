@@ -13,30 +13,33 @@ class ItemController extends Controller
     //
 
 
-    public function addItem(Request $request): JsonResponse
+    public function addItem(Request $request0): JsonResponse
     {
-        $image = $this->saveImage($request);
-
+        $image = $this->saveImage($request0);
+        $user=auth('api')->user();
+        $request=$request0["data"];
+        
         $result = Item::create([
 
-            'user_id' => $request['user_id'],
+            'user_id' => $user["id"],
             'name' => $request['name'],
             'details' => $request['details'],
             'category' => $request['category'],
             'subcategory' => $request['subcategory'],
             'image' => $image,
             'price' => $request['price'],
-            'phone'=>$request['phone']
 
 
         ]);
         return response()->json($result);
     }
 
-    public function updateItem(Request $request): JsonResponse
+    public function updateItem(Request $request0): JsonResponse
     {
-        $image = $this->saveImage($request);
-
+        $image = $this->saveImage($request0);
+        $user=auth('api')->user();
+        $request=$this->$request0["data"];
+  
         $result = Item::where('id', $request['id'])->update([
             'user_id' => $request['user_id'],
             'name' => $request['name'],
@@ -65,18 +68,19 @@ class ItemController extends Controller
     }
 
 
-    public  function fetch(){
-        $type1 = Item::whereCategory("Clothes & Accessories")->take(10);
+    public  function fetchLatest(){
+      /*  $type1 = Item::whereCategory("Clothes & Accessories")->take(10);
         $type2 = Item::whereCategory("Family")->take(10);
         $type3 = Item::whereCategory("Vehicles")->take(10);
         $type4 = Item::whereCategory("Home & Garden")->take(10);
         $type5 = Item::whereCategory("Electronics")->take(10);
         $type6 = Item::whereCategory("Entertainment")->take(10);
-
-
-
         $types = $type1->union($type2)->union($type3)->union($type4)->union($type5)->union($type6)->get();
-        return response()->json($types);
+       */
+
+      $items=Item::paginate(10);
+      
+      return response()->json($items);
     }
 
     public function fetchAll(): JsonResponse
@@ -119,6 +123,7 @@ class ItemController extends Controller
 
         $items=DB::select("select * from items where category ='$category' and subcategory='$subcategory'");
         return response()->json($items);
+        
 
 
     }
@@ -142,10 +147,10 @@ class ItemController extends Controller
 
     public function saveImage(Request $data): string
     {
-        $file_extension = $data["photo"]->getClientOriginalExtension();
+        $file_extension = $data["image"]->getClientOriginalExtension();
         $filename = time() . "." . $file_extension;
         $path = "storage/images";
-        $data["photo"]->move($path, $filename);
+        $data["image"]->move($path, $filename);
 
 
         return $filename;
